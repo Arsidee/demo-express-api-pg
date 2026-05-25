@@ -10,6 +10,10 @@ app.use(express.json())
 
 let dbConnection // This is initialized when the server starts
 
+app.get('/health', async function(request, response) {
+  response.json({ status: 'healthy' });
+})
+
 app.get("/users", async function(request, response) {
   var results = await dbConnection.execute(`
     SELECT *
@@ -38,15 +42,16 @@ app.post("/users", async function(request, response) {
     firstName: request.body["firstName"],
     lastName: request.body["lastName"],
     age: request.body["age"],
-    weight: request.body["weight"]
+    weight: request.body["weight"],
+    smoker: request.body["smoker"]
   }
   console.log(newUser)
 
   var sql = `
-    INSERT INTO users (first_name, last_name, age, weight)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO users (first_name, last_name, age, weight, smoker)
+    VALUES (?, ?, ?, ?, ?)
   `
-  var values = [newUser["firstName"], newUser["lastName"], newUser["age"], newUser["weight"]]
+  var values = [newUser["firstName"], newUser["lastName"], newUser["age"], newUser["weight"], newUser["smoker"]]
 
   await dbConnection.execute(sql, values)
 
@@ -59,7 +64,8 @@ app.put("/users/:id", async function(request, response) {
     firstName: request.body["firstName"],
     lastName: request.body["lastName"],
     age: request.body["age"],
-    weight: request.body["weight"]
+    weight: request.body["weight"],
+    smoker: request.body["smoker"]
   }
   console.log(user)
 
@@ -69,9 +75,10 @@ app.put("/users/:id", async function(request, response) {
         last_name = ?,
         age = ?,
         weight = ?
+        smoker = ?
     WHERE id = ?
   `
-  var values = [user["firstName"], user["lastName"], user["age"], user["weight"], user["id"]]
+  var values = [user["firstName"], user["lastName"], user["age"], user["weight"], user["smoker"], user["id"]]
 
   await dbConnection.execute(sql, values)
 

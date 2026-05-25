@@ -12,7 +12,6 @@
   },
   "scripts": {
     "start": "node app.js",
-    "dev": "DEBUG=app:* nodemon app.js",
-    "dbSetup": "node ./bin/dbSetup.js"
+    "dev": "DEBUG=app:* nodemon app.js"
   }
 }
