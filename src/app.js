@@ -30,8 +30,8 @@ app.get("/users/:id", async function(request, response) {
   var results = await dbConnection.execute(`
     SELECT *
     FROM users
-    WHERE id = ${id}
-  `)
+    WHERE id = ?
+  `, [id])
 
   console.log(results[0][0])
   response.json(results[0][0])

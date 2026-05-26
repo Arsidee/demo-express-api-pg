@@ -7,7 +7,7 @@ USE my_database;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   first_name VARCHAR(255),
   last_name VARCHAR(255),
   age INT,
