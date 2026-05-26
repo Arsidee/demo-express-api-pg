@@ -1,4 +1,4 @@
-var mysql = require("mysql2/promise")
+var { Client } = require("pg")
 var express = require("express")
 var configuration = require("./configuration")
 
@@ -15,26 +15,26 @@ app.get('/health', async function(request, response) {
 })
 
 app.get("/users", async function(request, response) {
-  var results = await dbConnection.execute(`
+  var results = await dbConnection.query(`
     SELECT *
     FROM users
   `)
 
-  console.log(results[0])
-  response.json(results[0])
+  console.log(results.rows)
+  response.json(results.rows)
 })
 
 app.get("/users/:id", async function(request, response) {
   var id = request.params.id
 
-  var results = await dbConnection.execute(`
+  var results = await dbConnection.query(`
     SELECT *
     FROM users
-    WHERE id = ?
+    WHERE id = $1
   `, [id])
 
-  console.log(results[0][0])
-  response.json(results[0][0])
+  console.log(results.rows[0])
+  response.json(results.rows[0])
 })
 
 app.post("/users", async function(request, response) {
@@ -49,11 +49,11 @@ app.post("/users", async function(request, response) {
 
   var sql = `
     INSERT INTO users (first_name, last_name, age, weight, smoker)
-    VALUES (?, ?, ?, ?, ?)
+    VALUES ($1, $2, $3, $4, $5)
   `
   var values = [newUser["firstName"], newUser["lastName"], newUser["age"], newUser["weight"], newUser["smoker"]]
 
-  await dbConnection.execute(sql, values)
+  await dbConnection.query(sql, values)
 
   response.json(newUser)
 })
@@ -71,16 +71,16 @@ app.put("/users/:id", async function(request, response) {
 
   var sql = `
     UPDATE users
-    SET first_name = ?,
-        last_name = ?,
-        age = ?,
-        weight = ?
-        smoker = ?
-    WHERE id = ?
+    SET first_name = $1,
+        last_name = $2,
+        age = $3,
+        weight = $4,
+        smoker = $5
+    WHERE id = $6
   `
   var values = [user["firstName"], user["lastName"], user["age"], user["weight"], user["smoker"], user["id"]]
 
-  await dbConnection.execute(sql, values)
+  await dbConnection.query(sql, values)
 
   response.json(user)
 })
@@ -88,20 +88,21 @@ app.put("/users/:id", async function(request, response) {
 app.delete("/users/:id", async function(request, response) {
   var id = request.params.id
 
-  const sql = `
+  var sql = `
     DELETE FROM users
-    WHERE id = ?
-  `;
-  await dbConnection.execute(sql, [id]);
+    WHERE id = $1
+  `
+  await dbConnection.query(sql, [id])
 
-  message = { msg: "Deleted user" }
+  var message = { msg: "Deleted user" }
   console.log(message)
   response.json(message)
 })
 
-mysql.createConnection(configuration)
-  .then(function(createdConnection) {
-    dbConnection = createdConnection // This makes it globally available
+var client = new Client(configuration)
+client.connect()
+  .then(function() {
+    dbConnection = client  // This makes it globally available
     console.log("[Connected to the database]")
 
     // Start the server after connecting to the database

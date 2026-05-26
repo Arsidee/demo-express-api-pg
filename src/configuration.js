@@ -1,9 +1,9 @@
 
 var configuration = {
   host: 'db', // This is the service name defined in the docker-compose file
-  user: 'root',
+  user: 'postgres',
   password: 'super',
-  database: 'my_database'
+  database: 'postgres'
 }
 
 module.exports = configuration

@@ -17,14 +17,17 @@ services:
     command: "npm run dev"
 
   db:
-    image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
-    ports:
-      - 3306:3306
+    image: postgres:16
     environment:
-      MYSQL_DATABASE: my_database
-      MYSQL_ROOT_PASSWORD: super
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: super
+    ports:
+      - 5432:5432
     volumes:
       - ./db/setup.sql:/docker-entrypoint-initdb.d/setup.sql
-      # Uncomment this if you want the DB to stop erasing data when bringing the stack down
-      # - db:/var/lib/mysql
+      # Uncomment the following line to enable DB persistence
+      # - postgres:/var/lib/postgresql/data
+
+# Uncomment the following lines to enable DB persistence across container restarts
+# volumes:
+  # postgres:

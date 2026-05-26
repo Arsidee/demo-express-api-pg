@@ -1,6 +1,6 @@
 # README
 
-This is an Express API demo that illustrates a single-file backend Node/Express API with access to a MySQL DB instance
+This is an Express API demo that illustrates a single-file backend Node/Express API with access to a PostgreSQL (Postgres) DB instance
 
 ## Prerequisites
 
