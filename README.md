@@ -1,7 +1,3 @@
-<style>
-  body { font-size: 125%; }
-</style>
-
 # Demo Express API (Postgres)
 
 A single-file Node/Express API demonstrating CRUD operations backed by PostgreSQL, fully containerized with Docker Compose.
