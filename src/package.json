@@ -12,6 +12,6 @@
   },
   "scripts": {
     "start": "node app.js",
-    "dev": "DEBUG=app:* nodemon app.js"
+    "dev": "DEBUG=app:* nodemon --legacy-watch app.js"
   }
 }

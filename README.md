@@ -1,55 +1,27 @@
-# Demo Express API (Postgres)
+# Demo Express API
 
-A single-file Node/Express API demonstrating CRUD operations backed by PostgreSQL, fully containerized with Docker Compose.
+A RESTful API built with **Node.js**, **Express**, and **PostgreSQL**, fully containerized with **Docker Compose**. Built to practice backend fundamentals — REST routing, parameterized SQL queries, and relational data modeling.
 
-## Prerequisites
+## Tech Stack
 
-**Windows**
+- **Runtime:** Node.js
+- **Framework:** Express
+- **Database:** PostgreSQL (via the `pg` driver)
+- **Container:** Docker Compose
 
-- [Docker Desktop](https://docs.docker.com/desktop/install/windows-install)
-- [WSL](https://learn.microsoft.com/en-us/windows/wsl/install#install-wsl-command)
-- Run `git config --global core.autocrlf input` to avoid line-ending errors
+## Endpoints
 
-**macOS**
-
-- [Docker Desktop](https://docs.docker.com/desktop/install/mac-install)
-
-## Getting Started
-
-1. Clone the repo and enter the project directory
-2. Install dependencies:
-   ```sh
-   docker compose run --rm app npm install
-   ```
-3. Start the database:
-   ```sh
-   docker compose up -d db
-   ```
-   Watch logs with `docker compose logs -f db` — wait until it says "ready to accept connections", then `Ctrl+C` to detach.
-4. Start the app:
-   ```sh
-   docker compose up -d app
-   ```
-5. Confirm it's running at [http://localhost:3000/health](http://localhost:3000/health)
-
-When you're done:
-```sh
-docker compose down
-```
-
-## API Endpoints
+### Users
 
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | `/health` | Health check |
 | GET | `/users` | List all users |
 | GET | `/users/:id` | Get a user by ID |
 | POST | `/users` | Create a user |
 | PUT | `/users/:id` | Update a user |
 | DELETE | `/users/:id` | Delete a user |
 
-### Request Body (POST / PUT)
-
+**Request body (POST / PUT):**
 ```json
 {
   "firstName": "Jane",
@@ -60,18 +32,36 @@ docker compose down
 }
 ```
 
-### Examples
+### Players
 
-List all users:
-```sh
-curl http://localhost:3000/users
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/players` | List all players |
+| GET | `/players/:id` | Get a player by ID |
+| POST | `/players` | Create a player |
+| PUT | `/players/:id` | Update a player |
+| DELETE | `/players/:id` | Delete a player |
+| POST | `/players/:player1_id/players/:player2_id/attack` | Player 1 attacks Player 2 |
+
+**Request body (POST / PUT):**
+```json
+{
+  "username": "Shect",
+  "level": 70,
+  "hp": 1000,
+  "attack": 120,
+  "defense": 80
+}
 ```
 
-Create a user:
-```sh
-curl -X POST http://localhost:3000/users \
-  -H "Content-Type: application/json" \
-  -d '{"firstName":"Jane","lastName":"Doe","age":33,"weight":155.1,"smoker":false}'
+**Attack response:**
+```json
+{
+  "attacker": "Shect",
+  "defender": "Shalinth",
+  "damage": 20,
+  "defenderNewHp": 980
+}
 ```
 
 ## Project Structure
@@ -81,20 +71,29 @@ curl -X POST http://localhost:3000/users \
 ├── db/
 │   └── setup.sql        # Table schema and seed data
 └── src/
-    ├── app.js           # Express server and route handlers
+    ├── app.js           # Express server and all route handlers
     ├── configuration.js # Database connection config
     └── package.json
 ```
 
-## Database Persistence
+## Running Locally
 
-By default the database is ephemeral — data is lost when the container is removed. To enable persistence, uncomment the volume lines in `compose.yml`:
+Requires [Docker Desktop](https://docs.docker.com/desktop/install/windows-install) (and [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) on Windows).
 
-```yaml
-volumes:
-  - postgres:/var/lib/postgresql/data
+```sh
+# Install dependencies
+docker compose run --rm app npm install
 
-# and at the bottom:
-volumes:
-  postgres:
+# Start the database (wait for "ready to accept connections")
+docker compose up -d db
+
+# Start the app
+docker compose up -d app
+```
+
+Confirm it's running: [http://localhost:3000/health](http://localhost:3000/health)
+
+```sh
+# Shut everything down
+docker compose down
 ```
